@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Button Example</title>
+  <style>
+    /* Optional styling for the button, text field, label, and checkbox */
+    .button {
+      padding: 10px 20px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      text-align: center;
+      text-decoration: none;
+      display: inline-block;
+      font-size: 16px;
+      margin: 4px 2px;
+      cursor: pointer;
+    }
+    
+    .input-field {
+      padding: 5px;
+      font-size: 16px;
+    }
+    
+    .label {
+      font-size: 18px;
+      font-weight: bold;
+    }
+    
+    .checkbox-label {
+      display: block;
+      margin-bottom: 5px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Button Example</h1>
+  
+  <label class="label" for="textInput">Tempo Ligado</label>
+  <br>
+  <input type="text" id="textInput" class="input-field" placeholder="Enter your message">
+
+  <label class="checkbox-label">
+    <input type="checkbox" id="checkbox">
+    <span class="label">Ligado</span>
+  </label>
+
+  <button id="mqttButton" class="button">Click Me!</button>
+
+  <script src="src/lib/mqttws31.min.js"></script>
+
+  <script>
+    const mqttButton = document.getElementById("mqttButton");
+    const textInput = document.getElementById("textInput");
+    const checkbox = document.getElementById("checkbox");
+
+
+    function onConnect() {
+      console.log("MQTT connected");
+
+    }
+
+    function getTextInputValue() {
+      return textInput.value; // Return the value of the text input field
+    }
+
+    function getCheckboxValue() {
+      return checkbox.checked; // Return the state of the checkbox
+    }
+
+    function generateClientId() {
+      const timestamp = new Date().getTime(); // Get current timestamp
+      const randomId = Math.random().toString(36).substr(2, 9); // Generate random ID
+      return `clientId_${timestamp}_${randomId}`; // Combine timestamp and random ID
+    }
+
+
+    const client_id = generateClientId();
+    const broker = "becd946a426e4db496bf13f1185a6269.s1.eu.hivemq.cloud"
+    const port = 8884
+    const client = new Paho.MQTT.Client(broker, port, client_id);
+    // MQTT message publishing code
+
+    const mqttOptions = {
+        onSuccess: onConnect,
+        useSSL: true,
+        userName: 'admin', // Replace with your MQTT broker username
+        password: 'Admin#123456'  // Replace with your MQTT broker password
+    };
+
+    client.connect(mqttOptions);
+    // Add a click event listener to the button
+    mqttButton.addEventListener("click", function() {
+      let isChecked = checkbox.checked; // Check if the checkbox is checked
+      let tempo_ligado = getTextInputValue();
+      if(!tempo_ligado){
+        tempo_ligado = 1000;
+      }
+      const mqttMessage = new Paho.MQTT.Message(JSON.stringify({"ligado":getCheckboxValue(), "tempo_ligado":parseInt(tempo_ligado), "pisca":false, "frequencia":0.0})); // Convert the payload to JSON string
+      mqttMessage.destinationName = 'state/led';
+
+      client.send(mqttMessage);
+
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,17 @@
+ul.nav {
+    padding-left: 0px;
+    text-align: center;
+  }
+ul.nav > li {
+    display: inline-block;
+    padding: 10px 20px;
+    font-family:'Times New Roman', Times, serif;
+    font-size: x-large;
+}
+ul.nav > li:hover {
+    color: #2779BF;
+}
+ul.nav > li > a {
+    color: white;
+    text-decoration: none;
+}
