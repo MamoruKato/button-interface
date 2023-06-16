@@ -71,33 +71,33 @@
 
 
     function onConnect() {
-      const checkbox = document.getElementById("connected_checkbox");
+      const connected_checkbox = document.getElementById("connected_checkbox");
       console.log("MQTT connected");
       client.subscribe("atual/estado/led");
 
-      checkbox.checked = true;
+      connected_checkbox.checked = true;
 
     }
 
     function onConnectionLost(responseObject) {
-      const checkbox = document.getElementById("connected_checkbox");
+      const connected_checkbox = document.getElementById("connected_checkbox");
       if (responseObject.errorCode !== 0) {
         console.log("Connection lost:", responseObject.errorMessage);
       }
 
-      checkbox.checked = false;
+      connected_checkbox.checked = false;
       // Add your custom logic for disconnect handling here
     }
 
     function onMessageArrived(message) {
         const receivedPayload = JSON.parse(message.payloadString); // Parse the payload as JSON
         const receivedMessage = receivedPayload.message;
-        const checkbox = document.getElementById("device_connected_checkbox");
+        const device_connected_checkbox = document.getElementById("device_connected_checkbox");
 
         
         // Process the received message as needed
         console.log("Received Message:", receivedMessage);
-        checkbox.checked = true;
+        device_connected_checkbox.checked = true;
         // You can update the UI or perform any other actions based on the received message
     }
 
