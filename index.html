@@ -96,21 +96,14 @@
         const device_connected_checkbox = document.getElementById("device_connected_checkbox");
 
 
-        const currentTime = new Date().getTime();
-        const elapsedTime = lastMessageTime ? currentTime - lastMessageTime : 0;
-        lastMessageTime = currentTime;
-
-          // Check if elapsed time exceeds 60 seconds (60000 milliseconds)
-          if (elapsedTime > 60000) {
-            console.log("Device connection timed out");
-            device_connected_checkbox.checked = false;
-          }else{
-            console.log("Received Message:", receivedMessage);
-            device_connected_checkbox.checked = true;
-          }
+        lastMessageTime = Date.now(); // Update the last message time
+        console.log("Received Message:", receivedMessage);
+        device_connected_checkbox.checked = true;
         // Process the received message as needed
         // You can update the UI or perform any other actions based on the received message
     }
+
+    
 
     function getTextInputValue() {
       return textInput.value; // Return the value of the text input field
@@ -159,6 +152,17 @@
       client.send(mqttMessage);
 
     });
+
+    setInterval(function() {
+      const currentTime = Date.now();
+      const elapsedTimeInSeconds = (currentTime - lastMessageTime) / 1000;
+
+      // Check if the elapsed time exceeds 60 seconds
+      if (elapsedTimeInSeconds > 60) {
+        console.log("Timeout");
+      }
+    }, 1000);
+
   </script>
 </body>
 </html>
