@@ -3,7 +3,59 @@
 <head>
   <title>Button Example</title>
   <style>
-    /* Optional styling for the button, text field, label, and checkbox */
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f2f2f2;
+      margin: 0;
+      padding: 20px;
+    }
+    
+    h1 {
+      color: #333333;
+    }
+    
+    .container {
+      max-width: 400px;
+      margin: 0 auto;
+      background-color: #ffffff;
+      border-radius: 5px;
+      padding: 20px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      justify-content: center;
+    }
+    
+    .input-field {
+      width: 100%;
+      padding: 10px;
+      font-size: 16px;
+      border-radius: 5px;
+      border: 1px solid #dddddd;
+      margin-bottom: 10px;
+    }
+    
+    .label {
+      font-size: 18px;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+    
+    .checkbox-label {
+      display: flex;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    
+    .checkbox-label input[type="checkbox"] {
+      margin-right: 10px;
+    }
+
+    .checkbox-label + .checkbox-label {
+      margin-top: 10px;
+    }
+    
     .button {
       padding: 10px 20px;
       background-color: #4CAF50;
@@ -11,56 +63,58 @@
       border: none;
       text-align: center;
       text-decoration: none;
-      display: inline-block;
-      font-size: 16px;
-      margin: 4px 2px;
-      cursor: pointer;
-    }
-    
-    .input-field {
-      padding: 5px;
-      font-size: 16px;
-    }
-    
-    .label {
-      font-size: 18px;
-      font-weight: bold;
-    }
-    
-    .checkbox-label {
       display: block;
-      margin-bottom: 5px;
+      font-size: 16px;
+      margin-top: 20px;
+      cursor: pointer;
+      border-radius: 5px;
+      transition: background-color 0.3s ease;
+    }
+    
+    .button:hover {
+      background-color: #45a049;
+    }
+    
+    .button:active {
+      background-color: #3e8940;
+    }
+    
+    .conectado-field {
+      font-weight: bold;
+      margin-top: 10px;
     }
   </style>
 </head>
 <body>
-  <h1>Button Example</h1>
-  
-  <h2> Estado </h2>
+  <div class="container">
+    <h1>Button Example</h1>
 
-  <label class="checkbox-label">
-    <input type="checkbox" id="connected_checkbox" disabled>
-    <span class="label">Conectado ao servidor</span>
-  </label>
+    <h2>Estado</h2>
 
+    <label class="checkbox-label">
+      <input type="checkbox" id="connected_checkbox" disabled>
+      <span class="label">Conectado ao servidor</span>
+    </label>
 
-  <label class="checkbox-label">
-    <input type="checkbox" id="device_connected_checkbox" disabled>
-    <span class="label">Dispositivo conectado</span>
-  </label>
+    <label class="checkbox-label">
+      <input type="checkbox" id="device_connected_checkbox" disabled>
+      <span class="label">Dispositivo conectado</span>
+    </label>
 
-  <h2> Comando </h2>
+    <h2>Comando</h2>
 
-  <label class="label" for="textInput">Tempo Ligado</label>
-  <br>
-  <input type="text" id="textInput" class="input-field" placeholder="Enter your message">
+    <label class="label" for="textInput">Tempo Ligado</label>
+    <input type="text" id="textInput" class="input-field" placeholder="Enter your message">
 
-  <label class="checkbox-label">
-    <input type="checkbox" id="checkbox">
-    <span class="label">Ligado</span>
-  </label>
+    <div class="checkbox-label">
+      <input type="checkbox" id="checkbox">
+      <span class="label">Ligado</span>
+    </div>
 
-  <button id="mqttButton" class="button">Click Me!</button>
+    <button id="mqttButton" class="button">Click Me!</button>
+
+    <span id="conectadoField" class="conectado-field">Conectado</span>
+  </div>
 
   <script src="src/lib/mqttws31.min.js"></script>
 
@@ -70,14 +124,12 @@
     const checkbox = document.getElementById("checkbox");
     let lastMessageTime = null;
 
-
     function onConnect() {
       const connected_checkbox = document.getElementById("connected_checkbox");
       console.log("MQTT connected");
       client.subscribe("atual/estado/led");
 
       connected_checkbox.checked = true;
-
     }
 
     function onConnectionLost(responseObject) {
@@ -91,19 +143,16 @@
     }
 
     function onMessageArrived(message) {
-        const receivedPayload = JSON.parse(message.payloadString); // Parse the payload as JSON
-        const receivedMessage = receivedPayload.message;
-        const device_connected_checkbox = document.getElementById("device_connected_checkbox");
+      const receivedPayload = JSON.parse(message.payloadString); // Parse the payload as JSON
+      const receivedMessage = receivedPayload.message;
+      const device_connected_checkbox = document.getElementById("device_connected_checkbox");
 
-
-        lastMessageTime = Date.now(); // Update the last message time
-        console.log("Received Message:", receivedMessage);
-        device_connected_checkbox.checked = true;
-        // Process the received message as needed
-        // You can update the UI or perform any other actions based on the received message
+      lastMessageTime = Date.now(); // Update the last message time
+      console.log("Received Message:", receivedMessage);
+      device_connected_checkbox.checked = true;
+      // Process the received message as needed
+      // You can update the UI or perform any other actions based on the received message
     }
-
-    
 
     function getTextInputValue() {
       return textInput.value; // Return the value of the text input field
@@ -119,41 +168,38 @@
       return `clientId_${timestamp}_${randomId}`; // Combine timestamp and random ID
     }
 
-
     const client_id = generateClientId();
-    const broker = "becd946a426e4db496bf13f1185a6269.s1.eu.hivemq.cloud"
-    const port = 8884
+    const broker = "becd946a426e4db496bf13f1185a6269.s1.eu.hivemq.cloud";
+    const port = 8884;
     const client = new Paho.MQTT.Client(broker, port, client_id);
     // MQTT message publishing code
 
     const mqttOptions = {
-        onSuccess: onConnect,
-        useSSL: true,
-        userName: 'admin', // Replace with your MQTT broker username
-        password: 'Admin#123456'  // Replace with your MQTT broker password
+      onSuccess: onConnect,
+      useSSL: true,
+      userName: 'admin', // Replace with your MQTT broker username
+      password: 'Admin#123456' // Replace with your MQTT broker password
     };
 
     client.onMessageArrived = onMessageArrived;
     client.onConnectionLost = onConnectionLost;
 
-
-
     client.connect(mqttOptions);
+
     // Add a click event listener to the button
-    mqttButton.addEventListener("click", function() {
+    mqttButton.addEventListener("click", function () {
       let isChecked = checkbox.checked; // Check if the checkbox is checked
       let tempo_ligado = getTextInputValue();
-      if(!tempo_ligado){
+      if (!tempo_ligado) {
         tempo_ligado = 1000;
       }
-      const mqttMessage = new Paho.MQTT.Message(JSON.stringify({"ligado":getCheckboxValue(), "tempo_ligado":parseInt(tempo_ligado), "pisca":false, "frequencia":0.0})); // Convert the payload to JSON string
+      const mqttMessage = new Paho.MQTT.Message(JSON.stringify({ "ligado": getCheckboxValue(), "tempo_ligado": parseInt(tempo_ligado), "pisca": false, "frequencia": 0.0 })); // Convert the payload to JSON string
       mqttMessage.destinationName = 'estado/led';
 
       client.send(mqttMessage);
-
     });
 
-    setInterval(function() {
+    setInterval(function () {
       const device_connected_checkbox = document.getElementById("device_connected_checkbox");
       const currentTime = Date.now();
       const elapsedTimeInSeconds = (currentTime - lastMessageTime) / 1000;
@@ -164,7 +210,6 @@
         device_connected_checkbox.checked = false;
       }
     }, 1000);
-
   </script>
 </body>
 </html>
