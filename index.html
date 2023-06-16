@@ -36,6 +36,21 @@
 <body>
   <h1>Button Example</h1>
   
+  <h2> Estado </h2>
+
+  <label class="checkbox-label">
+    <input type="checkbox" id="checkbox">
+    <span class="label">Conectado ao servidor</span>
+  </label>
+
+
+  <label class="checkbox-label">
+    <input type="checkbox" id="checkbox">
+    <span class="label">Dispositivo conectado</span>
+  </label>
+
+  <h2> Comando </h2>
+
   <label class="label" for="textInput">Tempo Ligado</label>
   <br>
   <input type="text" id="textInput" class="input-field" placeholder="Enter your message">
@@ -57,7 +72,17 @@
 
     function onConnect() {
       console.log("MQTT connected");
+      client.subscribe("atual/estado/led");
 
+    }
+
+    function onMessageArrived(message) {
+        const receivedPayload = JSON.parse(message.payloadString); // Parse the payload as JSON
+        const receivedMessage = receivedPayload.message;
+
+        // Process the received message as needed
+        console.log("Received Message:", receivedMessage);
+        // You can update the UI or perform any other actions based on the received message
     }
 
     function getTextInputValue() {
@@ -87,6 +112,9 @@
         userName: 'admin', // Replace with your MQTT broker username
         password: 'Admin#123456'  // Replace with your MQTT broker password
     };
+
+    client.onMessageArrived = onMessageArrived;
+
 
     client.connect(mqttOptions);
     // Add a click event listener to the button
