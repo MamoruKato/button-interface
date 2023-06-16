@@ -154,12 +154,14 @@
     });
 
     setInterval(function() {
+      const device_connected_checkbox = document.getElementById("device_connected_checkbox");
       const currentTime = Date.now();
       const elapsedTimeInSeconds = (currentTime - lastMessageTime) / 1000;
 
       // Check if the elapsed time exceeds 60 seconds
       if (elapsedTimeInSeconds > 60) {
         console.log("Timeout");
+        device_connected_checkbox.checked = true;
       }
     }, 1000);
 
