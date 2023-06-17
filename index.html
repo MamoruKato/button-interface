@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Apicativo botoeira</title>
+  <title>Apicativo LED</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -83,11 +83,25 @@
       font-weight: bold;
       margin-top: 10px;
     }
+
+  .feedback-wrapper {
+    margin-bottom: 10px; /* Adjust the margin value as needed */
+  }
+
+  .feedback-field {
+    width: 100%;
+    padding: 8px;
+    font-size: 14px;
+    border-radius: 5px;
+    border: 1px solid #dddddd;
+    resize: vertical;
+  }
+
   </style>
 </head>
 <body>
   <div class="container">
-    <h1>Button Example</h1>
+    <h1>Aplicativo</h1>
 
     <h2>Estado</h2>
 
@@ -101,9 +115,22 @@
       <span class="label">Dispositivo conectado</span>
     </label>
 
+    <h2>Configurações atuais</h2>
+
+    <div class="feedback-wrapper">
+      <label class="label" for="feedbackText">Tempo Ligado (ms)</label>
+      <textarea id="feedbackText" class="feedback-field" rows="1" readonly></textarea>
+    </div>
+
+
+    <label class="checkbox-label">
+      <input type="checkbox" id="atual_ligado_checkbox" disabled>
+      <span class="label">Ligado</span>
+    </label>
+
     <h2>Comando</h2>
 
-    <label class="label" for="textInput">Tempo Ligado</label>
+    <label class="label" for="textInput">Tempo Ligado (ms)</label>
     <input type="text" id="textInput" class="input-field" placeholder="Enter your message">
 
     <div class="checkbox-label">
@@ -121,6 +148,7 @@
     const mqttButton = document.getElementById("mqttButton");
     const textInput = document.getElementById("textInput");
     const checkbox = document.getElementById("checkbox");
+    let conectado = false;
     let lastMessageTime = null;
 
     function onConnect() {
@@ -144,11 +172,18 @@
     function onMessageArrived(message) {
       const receivedPayload = JSON.parse(message.payloadString); // Parse the payload as JSON
       const receivedMessage = receivedPayload.message;
+      const feedbackText = document.getElementById("feedbackText");
+      const atual_ligado_checkbox = document.getElementById("atual_ligado_checkbox");
       const device_connected_checkbox = document.getElementById("device_connected_checkbox");
-
+  
       lastMessageTime = Date.now(); // Update the last message time
       console.log("Received Message:", receivedMessage);
+
+      feedbackText.value = receivedPayload['tempo_ligado'];
+      atual_ligado_checkbox.checked = receivedPayload["ligado"];
+
       device_connected_checkbox.checked = true;
+      conectado = true;
       // Process the received message as needed
       // You can update the UI or perform any other actions based on the received message
     }
@@ -205,8 +240,13 @@
 
       // Check if the elapsed time exceeds 60 seconds
       if (elapsedTimeInSeconds > 5) {
-        console.log("Timeout");
-        device_connected_checkbox.checked = false;
+        if(conectado){
+          console.log("Timeout");
+          window.alert("Dispositivo desconectado");
+          device_connected_checkbox.checked = false;
+          conectado = false;
+        }
+
       }
     }, 1000);
   </script>
