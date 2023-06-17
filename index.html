@@ -204,7 +204,7 @@
       const elapsedTimeInSeconds = (currentTime - lastMessageTime) / 1000;
 
       // Check if the elapsed time exceeds 60 seconds
-      if (elapsedTimeInSeconds > 60) {
+      if (elapsedTimeInSeconds > 5) {
         console.log("Timeout");
         device_connected_checkbox.checked = false;
       }
