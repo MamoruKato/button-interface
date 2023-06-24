@@ -139,6 +139,8 @@
     </div>
 
     <button id="mqttButton" class="button">Enviar!</button>
+    <button id="ligaButton" class="button">Liga</button>
+    <button id="desligaButton" class="button">Desliga</button>
 
   </div>
 
@@ -146,6 +148,8 @@
 
   <script>
     const mqttButton = document.getElementById("mqttButton");
+    const ligaButton = document.getElementById("ligaButton");
+    const desligaButton= document.getElementById("desligaButton");
     const textInput = document.getElementById("textInput");
     const checkbox = document.getElementById("checkbox");
     let conectado = false;
@@ -229,6 +233,25 @@
       }
       const mqttMessage = new Paho.MQTT.Message(JSON.stringify({ "ligado": getCheckboxValue(), "tempo_ligado": parseInt(tempo_ligado), "pisca": false, "frequencia": 0.0 })); // Convert the payload to JSON string
       mqttMessage.destinationName = 'estado/led';
+
+      client.send(mqttMessage);
+    });
+
+
+      // Add a click event listener to the button
+    ligaButton.addEventListener("click", function () {
+
+      const mqttMessage = new Paho.MQTT.Message(); // Convert the payload to JSON string
+      mqttMessage.destinationName = 'liga/led';
+
+      client.send(mqttMessage);
+    });
+
+          // Add a click event listener to the button
+    desligaButton.addEventListener("click", function () {
+
+      const mqttMessage = new Paho.MQTT.Message(); // Convert the payload to JSON string
+      mqttMessage.destinationName = 'desliga/led';
 
       client.send(mqttMessage);
     });
