@@ -241,7 +241,7 @@
       // Add a click event listener to the button
     ligaButton.addEventListener("click", function () {
 
-      const mqttMessage = new Paho.MQTT.Message(); // Convert the payload to JSON string
+      const mqttMessage = new Paho.MQTT.Message(JSON.stringify({ "liga":true})); // Convert the payload to JSON string
       mqttMessage.destinationName = 'liga/led';
 
       client.send(mqttMessage);
@@ -250,7 +250,7 @@
           // Add a click event listener to the button
     desligaButton.addEventListener("click", function () {
 
-      const mqttMessage = new Paho.MQTT.Message(); // Convert the payload to JSON string
+      const mqttMessage = new Paho.MQTT.Message(JSON.stringify({ "liga":false})); // Convert the payload to JSON string
       mqttMessage.destinationName = 'desliga/led';
 
       client.send(mqttMessage);
